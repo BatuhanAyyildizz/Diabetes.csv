@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+            padding: 20px;
+            font-size: 2.5em;
+            margin-top: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            font-size: 1.1em;
+            color: #555;
+        }
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            width: 100%;
+        }
+        input[type="button"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+        }
+        .link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Diabetes Prediction Form</h1>
+        <form id="prediction-form">
+            <label for="pregnancies">Pregnancies:</label>
+            <input type="number" id="pregnancies" name="pregnancies" required>
+
+            <label for="glucose">Glucose:</label>
+            <input type="number" step="any" id="glucose" name="glucose" required>
+
+            <label for="blood_pressure">Blood Pressure:</label>
+            <input type="number" step="any" id="blood_pressure" name="blood_pressure" required>
+
+            <label for="skin_thickness">Skin Thickness:</label>
+            <input type="number" step="any" id="skin_thickness" name="skin_thickness" required>
+
+            <label for="insulin">Insulin:</label>
+            <input type="number" step="any" id="insulin" name="insulin" required>
+
+            <label for="bmi">BMI:</label>
+            <input type="number" step="any" id="bmi" name="bmi" required>
+
+            <label for="diabetes_pedigree_function">Diabetes Pedigree Function:</label>
+            <input type="number" step="any" id="diabetes_pedigree_function" name="diabetes_pedigree_function" required>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required>
+
+            <input type="button" value="Predict" onclick="submitForm()">
+        </form>
+
+        <div id="result"></div>
+        <a href="/bmi" class="link">Go to BMI Calculation</a>
+    </div>
+
+    <script>
+        function submitForm() {
+            const formData = {
+                pregnancies: parseInt(document.getElementById('pregnancies').value),
+                glucose: parseFloat(document.getElementById('glucose').value),
+                blood_pressure: parseFloat(document.getElementById('blood_pressure').value),
+                skin_thickness: parseFloat(document.getElementById('skin_thickness').value),
+                insulin: parseFloat(document.getElementById('insulin').value),
+                bmi: parseFloat(document.getElementById('bmi').value),
+                diabetes_pedigree_function: parseFloat(document.getElementById('diabetes_pedigree_function').value),
+                age: parseInt(document.getElementById('age').value)
+            };
+
+            fetch('http://localhost:8000/predict/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.prediction) {
+                    document.getElementById('result').innerText = `Prediction: ${data.prediction}`;
+                } else {
+                    document.getElementById('result').innerText = `Error: ${data.detail}`;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
